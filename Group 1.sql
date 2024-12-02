@@ -129,11 +129,92 @@ CREATE TABLE "Order" (
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
 --4. Customer Management 
+CREATE TABLE Customer (
+    CustomerID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Address TEXT,
+    ContactNumber VARCHAR(15),
+    Email VARCHAR(255),
+    CustomerType ENUM('Individual', 'Distributor') NOT NULL,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Product (
+    ProductID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Description TEXT,
+    Price DECIMAL(10, 2) NOT NULL,
+    StockQuantity INT NOT NULL
+);
+
+CREATE TABLE Order (
+    OrderID INT AUTO_INCREMENT PRIMARY KEY,
+    CustomerID INT NOT NULL,
+    OrderDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Status ENUM('Pending', 'Completed') NOT NULL,
+    TotalAmount DECIMAL(10, 2),
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
+);
+
+CREATE TABLE OrderDetails (
+    OrderDetailID INT AUTO_INCREMENT PRIMARY KEY,
+    OrderID INT NOT NULL,
+    ProductID INT NOT NULL,
+    Quantity INT NOT NULL,
+    SubTotal DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (OrderID) REFERENCES Order(OrderID),
+    FOREIGN KEY (ProductID) REFERENCES Product(ProductID)
+);
 
 --5. Reporting and Analytics
+CREATE TABLE Report (
+    ReportID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Type ENUM('Sales', 'Inventory', 'Customer') NOT NULL,
+    GeneratedBy INT NOT NULL,
+    GeneratedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (GeneratedBy) REFERENCES User(UserID)
+);
 
+CREATE TABLE ReportData (
+    ReportDataID INT AUTO_INCREMENT PRIMARY KEY,
+    ReportID INT NOT NULL,
+    DataKey VARCHAR(255) NOT NULL,
+    DataValue VARCHAR(255),
+    FOREIGN KEY (ReportID) REFERENCES Report(ReportID)
+);
 --6. User Access Control 
+CREATE TABLE User (
+    UserID INT AUTO_INCREMENT PRIMARY KEY,
+    Username VARCHAR(255) NOT NULL UNIQUE,
+    PasswordHash VARCHAR(255) NOT NULL,
+    Email VARCHAR(255) NOT NULL UNIQUE,
+    RoleID INT NOT NULL,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (RoleID) REFERENCES Role(RoleID)
+);
 
+CREATE TABLE Role (
+    RoleID INT AUTO_INCREMENT PRIMARY KEY,
+    RoleName VARCHAR(255) NOT NULL UNIQUE,
+    Description TEXT
+);
+
+CREATE TABLE Permission (
+    PermissionID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL UNIQUE,
+    Description TEXT
+);
+
+CREATE TABLE RolePermission (
+    RolePermissionID INT AUTO_INCREMENT PRIMARY KEY,
+    RoleID INT NOT NULL,
+    PermissionID INT NOT NULL,
+    FOREIGN KEY (RoleID) REFERENCES Role(RoleID),
+    FOREIGN KEY (PermissionID) REFERENCES Permission(PermissionID)
+);
 --7. Multi-location Support 
 
 CREATE TABLE Location (
