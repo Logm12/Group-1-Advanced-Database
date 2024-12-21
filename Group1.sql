@@ -1,3 +1,4 @@
+DROP DATABASE Group1;
 CREATE DATABASE Group1;
 Use Group1;
 CREATE TABLE Customers (
@@ -236,7 +237,6 @@ CREATE TABLE CustomerInteractions (
   InteractionTypeID INT,
   InteractionDate DATE,
   Time TIME,
-  Notes TEXT,
   FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
   FOREIGN KEY (InteractionTypeID) REFERENCES InteractionTypes(InteractionTypeID)
 );
@@ -250,7 +250,6 @@ IGNORE 1 ROWS;
 CREATE TABLE CustomerSegments (
   SegmentID INT AUTO_INCREMENT PRIMARY KEY,
   SegmentName VARCHAR(100) NOT NULL,
-  Description TEXT 
 );
 LOAD DATA INFILE 'E:\\Data\\Customer_management\\Customer_segment.csv'
 INTO TABLE CustomerSegments
@@ -337,7 +336,6 @@ CREATE TABLE Reports (
     ReportID INT AUTO_INCREMENT PRIMARY KEY,
     Name VARCHAR(255) NOT NULL,
     Type ENUM('Sales', 'Inventory', 'Customer') NOT NULL,
-    GeneratedBy INT NOT NULL,
     GeneratedAtDate DATE,
     Time TIME,
     FOREIGN KEY (GeneratedBy) REFERENCES Users(UserID)
@@ -354,7 +352,6 @@ CREATE TABLE ReportData (
     ReportDataID INT AUTO_INCREMENT PRIMARY KEY,
     ReportID INT NOT NULL,
     DataKey VARCHAR(255) NOT NULL,
-    DataValue VARCHAR(255),
     FOREIGN KEY (ReportID) REFERENCES Reports(ReportID)
 );
 
@@ -550,12 +547,12 @@ IGNORE 1 ROWS;
 CREATE TABLE Notifications (
     NotificationID INT AUTO_INCREMENT PRIMARY KEY,
 	NotificationStatusID INT,
-    UserID INT NOT NULL,
+    CustomerID INT NOT NULL,
     NotificationType VARCHAR(50) NOT NULL,
     NotificationMessage TEXT NOT NULL,
     CreatedAtDate DATE,
     CreatedAtTime TIME,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
     FOREIGN KEY (NotificationStatusID) REFERENCES NotificationStatuses(NotificationStatusID)
 );
 LOAD DATA INFILE 'E:\\Data\\Notifications\\Notification1.csv'
@@ -565,3 +562,17 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
+DELIMITER //
+
+CREATE TRIGGER AutoAssignRole
+AFTER INSERT ON Users
+FOR EACH ROW
+BEGIN
+    IF NEW.Email LIKE '%@company.com' THEN
+        UPDATE Users
+        SET RoleID = (SELECT RoleID FROM Roles WHERE RoleName = 'Employee')
+        WHERE UserID = NEW.UserID;
+    END IF;
+END //
+
+DELIMITER ;
