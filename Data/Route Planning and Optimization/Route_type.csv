@@ -1,0 +1,11 @@
+RouteTypeID,Type
+1,Pass
+2,Terrace
+3,Drive
+4,Terrace
+5,Lane
+6,Drive
+7,Point
+8,Pass
+9,Junction
+10,Street
