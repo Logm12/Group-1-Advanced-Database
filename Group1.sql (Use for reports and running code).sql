@@ -236,7 +236,7 @@ IGNORE 1 ROWS;
 
 CREATE TABLE CustomerSegments (
   SegmentID INT AUTO_INCREMENT PRIMARY KEY,
-  SegmentName VARCHAR(100) NOT NULL,
+  SegmentName VARCHAR(100) NOT NULL
 );
 LOAD DATA INFILE 'E:\\Data\\Customer_management\\Customer_segment.csv'
 INTO TABLE CustomerSegments
@@ -276,7 +276,7 @@ IGNORE 1 ROWS;
 CREATE TABLE Users (
     UserID INT AUTO_INCREMENT PRIMARY KEY,
     Username VARCHAR(255) NOT NULL UNIQUE,
-    PasswordHash VARCHAR(255) NOT NULL,
+    Password VARCHAR(255) NOT NULL,
     Email VARCHAR(255) NOT NULL UNIQUE,
     RoleID INT NOT NULL,
     CreatedAtDate DATE,
@@ -394,7 +394,7 @@ CREATE TABLE MobileAccessLogs (
     UserID INT,
     DeviceID INT,
     LocationID INT,
-    AccessTime DATETIME NOT NULL,
+    AccessTime DATE NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (DeviceID) REFERENCES MobileDevices(DeviceID),
     FOREIGN KEY (LocationID) REFERENCES Locations(LocationID)
