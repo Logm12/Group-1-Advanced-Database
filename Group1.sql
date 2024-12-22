@@ -19,28 +19,15 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
-CREATE TABLE PaymentStatuses (
-  PaymentStatusID INT AUTO_INCREMENT PRIMARY KEY,
-  StatusName VARCHAR(50) NOT NULL
-);
-LOAD DATA INFILE 'E:\\Data\\Order_Management\\PaymentStatus.csv'
-INTO TABLE PaymentStatuses
-FIELDS TERMINATED BY ',' 
-ENCLOSED BY '"'
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS;
-
 CREATE TABLE Orders (
     OrderID INT AUTO_INCREMENT PRIMARY KEY,
     CustomerID INT,
-    PaymentStatusID INT,
     OrderDate DATE,
     Status VARCHAR(50),
     PaymentMethod VARCHAR(50),
     DeliveryDate DATE,
     ShippingAddress VARCHAR(255),
-    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
-    FOREIGN KEY (PaymentStatusID) REFERENCES PaymentStatuses(PaymentStatusID)
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
 );
 LOAD DATA INFILE 'E:\\Data\\Order_Management\\Orders(1).csv'
 INTO TABLE Orders
@@ -162,7 +149,7 @@ CREATE TABLE Routes (
     TotalDistance DECIMAL(10, 2),
     EstimatedTime DECIMAL(5, 2),
     StartLocation VARCHAR(255),
-    EndLocation VARCHAR(255),
+    EndLocation VARCHAR(400),
     FOREIGN KEY (RouteTypeID) REFERENCES RouteTypes(RouteTypeID)
 );
 LOAD DATA INFILE 'E:\\Data\\Route Planning and Optimization\\Routes.csv'
@@ -171,7 +158,6 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
-
 CREATE TABLE RoutePlans (
     RoutePlanID INT AUTO_INCREMENT PRIMARY KEY,
     RouteID INT,
@@ -184,13 +170,12 @@ CREATE TABLE RoutePlans (
     FOREIGN KEY (DriverID) REFERENCES Drivers(DriverID)
 );
 
-LOAD DATA INFILE 'E:\\Data\\Route Planning and Optimization\\Route_Plans.csv'
+LOAD DATA INFILE 'E:\\Data\\Route Planning and Optimization\\Route_plans.csv'
 INTO TABLE RoutePlans
 FIELDS TERMINATED BY ',' 
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
-
 -- 4. Customer Management
 CREATE TABLE ActionTypes (
     ActionTypeID INT AUTO_INCREMENT PRIMARY KEY,
@@ -249,7 +234,7 @@ IGNORE 1 ROWS;
 
 CREATE TABLE CustomerSegments (
   SegmentID INT AUTO_INCREMENT PRIMARY KEY,
-  SegmentName VARCHAR(100) NOT NULL,
+  SegmentName VARCHAR(100) NOT NULL
 );
 LOAD DATA INFILE 'E:\\Data\\Customer_management\\Customer_segment.csv'
 INTO TABLE CustomerSegments
@@ -276,7 +261,7 @@ IGNORE 1 ROWS;
 -- 6. User Access Control
 CREATE TABLE Roles (
     RoleID INT AUTO_INCREMENT PRIMARY KEY,
-    RoleName VARCHAR(255) NOT NULL UNIQUE,
+    RoleName VARCHAR(255) NOT NULL,
     Description TEXT
 );
 LOAD DATA INFILE 'E:\\Data\\User Access Control\\Roles.csv'
@@ -289,7 +274,7 @@ IGNORE 1 ROWS;
 CREATE TABLE Users (
     UserID INT AUTO_INCREMENT PRIMARY KEY,
     Username VARCHAR(255) NOT NULL UNIQUE,
-    PasswordHash VARCHAR(255) NOT NULL,
+    Password VARCHAR(255) NOT NULL,
     Email VARCHAR(255) NOT NULL UNIQUE,
     RoleID INT NOT NULL,
     CreatedAtDate DATE,
@@ -307,7 +292,7 @@ IGNORE 1 ROWS;
 
 CREATE TABLE Permissions (
     PermissionID INT AUTO_INCREMENT PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL UNIQUE,
+    Name VARCHAR(255) NOT NULL,
     Description TEXT
 );
 LOAD DATA INFILE 'E:\\Data\\User Access Control\\Permissions.csv'
@@ -337,8 +322,7 @@ CREATE TABLE Reports (
     Name VARCHAR(255) NOT NULL,
     Type ENUM('Sales', 'Inventory', 'Customer') NOT NULL,
     GeneratedAtDate DATE,
-    Time TIME,
-    FOREIGN KEY (GeneratedBy) REFERENCES Users(UserID)
+    Time TIME
 );
 
 LOAD DATA INFILE 'E:\\Data\\Reporting and Analytics\\Reports.csv'
@@ -407,7 +391,7 @@ CREATE TABLE MobileAccessLogs (
     UserID INT,
     DeviceID INT,
     LocationID INT,
-    AccessTime DATETIME NOT NULL,
+    AccessTime DATE NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (DeviceID) REFERENCES MobileDevices(DeviceID),
     FOREIGN KEY (LocationID) REFERENCES Locations(LocationID)
