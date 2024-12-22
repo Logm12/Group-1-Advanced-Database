@@ -548,64 +548,36 @@ LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 -- Use case: Inventory Management
 -- 1. Create New Order
+START TRANSACTION;
+INSERT INTO Orders (CustomerID, OrderDate, Status, PaymentMethod, DeliveryDate, ShippingAddress)
+VALUES (1, CURDATE(), 'Pending', 'Credit Card', DATE_ADD(CURDATE(), INTERVAL 5 DAY), 'Ha Noi');
+COMMIT;
+SELECT * FROM Orders;
 -- 2. Update Order Status
 START TRANSACTION;
 UPDATE Orders 
 SET Status = 'Processing' 
 WHERE OrderID = 1;
 COMMIT;
--- 3. Cancel Order:
-START TRANSACTION;
-UPDATE Orders 
-SET Status = 'Cancelled' 
-WHERE OrderID = 2;
-UPDATE InventoryItems 
-SET Quantity = Quantity + 10 
-WHERE ProductID = 302 AND WarehouseID = 1;
-UPDATE InventoryItems 
-SET Quantity = Quantity + 5 
-WHERE ProductID = 303 AND WarehouseID = 1;
-DELETE FROM OrderDetails 
-WHERE OrderID = 2;
-COMMIT;
--- 4. View Order Details
-SELECT * 
-FROM Orders 
-WHERE OrderID = 3;
--- 5. List All Orders for a Customer
-SELECT * 
-FROM Orders 
-WHERE CustomerID = 3;
-
-SELECT * 
-FROM OrderDetails 
-WHERE OrderID IN (SELECT OrderID FROM Orders WHERE CustomerID = 3);
-
+SELECT * FROM Orders;
+-- 3. View Canceled Order Details
+SELECT o.OrderDate, c.CustomerID, c.Name, o.Status 
+FROM Orders o 
+JOIN Customers c ON o.CustomerID = c.CustomerID
+WHERE o.Status = 'cancelled'
+ORDER BY o.OrderDate;
 -- Use Case:  Inventory Tracking
--- 1. Update Inventory
-UPDATE InventoryItems 
-SET Quantity = Quantity + 100, LastUpdated = CURRENT_TIME 
-WHERE ProductID = 201 AND WarehouseID = 1;
-
--- 2. Check Inventory Levels
-SELECT ProductID, Quantity, LastUpdated 
-FROM InventoryItems 
-WHERE ProductID = 201 AND WarehouseID = 1;
-
--- 3. View Inventory Levels Below Reorder Level
-SELECT i.ProductID, p.Name, i.Quantity, p.ReorderLevel 
-FROM InventoryItems i
-JOIN Products p ON i.ProductID = p.ProductID
-WHERE i.Quantity < p.ReorderLevel
-ORDER BY i.Quantity ASC;
--- 4. Generate Inventory Report
+-- 1. View Warehouse Inventory
+SELECT w.WarehouseID, w.Name AS WarehouseName, w.Location, i.Quantity, i.LastUpdated 
+FROM Warehouses w 
+LEFT JOIN InventoryItems i ON w.WarehouseID = i.WarehouseID;
+-- 2. Generate Inventory Report
 SELECT w.Name AS WarehouseName, p.Name AS ProductName, SUM(i.Quantity) AS TotalQuantity
 FROM InventoryItems i
 JOIN Warehouses w ON i.WarehouseID = w.WarehouseID
 JOIN Products p ON i.ProductID = p.ProductID
 GROUP BY w.Name, p.Name
 ORDER BY w.Name, p.Name;
-
 -- Route Planning and Optimization
 -- 1. Assign Delivery Route
 START TRANSACTION;
