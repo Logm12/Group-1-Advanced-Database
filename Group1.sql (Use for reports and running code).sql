@@ -149,7 +149,7 @@ CREATE TABLE Routes (
     TotalDistance DECIMAL(10, 2),
     EstimatedTime DECIMAL(5, 2),
     StartLocation VARCHAR(255),
-    EndLocation VARCHAR(255),
+    EndLocation VARCHAR(400),
     FOREIGN KEY (RouteTypeID) REFERENCES RouteTypes(RouteTypeID)
 );
 LOAD DATA INFILE 'E:\\Data\\Route Planning and Optimization\\Routes.csv'
@@ -158,7 +158,6 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
-
 CREATE TABLE RoutePlans (
     RoutePlanID INT AUTO_INCREMENT PRIMARY KEY,
     RouteID INT,
@@ -171,13 +170,12 @@ CREATE TABLE RoutePlans (
     FOREIGN KEY (DriverID) REFERENCES Drivers(DriverID)
 );
 
-LOAD DATA INFILE 'E:\\Data\\Route Planning and Optimization\\Route_Plans.csv'
+LOAD DATA INFILE 'E:\\Data\\Route Planning and Optimization\\Route_plans.csv'
 INTO TABLE RoutePlans
 FIELDS TERMINATED BY ',' 
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
-
 -- 4. Customer Management
 CREATE TABLE ActionTypes (
     ActionTypeID INT AUTO_INCREMENT PRIMARY KEY,
@@ -263,7 +261,7 @@ IGNORE 1 ROWS;
 -- 6. User Access Control
 CREATE TABLE Roles (
     RoleID INT AUTO_INCREMENT PRIMARY KEY,
-    RoleName VARCHAR(255) NOT NULL UNIQUE,
+    RoleName VARCHAR(255) NOT NULL,
     Description TEXT
 );
 LOAD DATA INFILE 'E:\\Data\\User Access Control\\Roles.csv'
@@ -294,7 +292,7 @@ IGNORE 1 ROWS;
 
 CREATE TABLE Permissions (
     PermissionID INT AUTO_INCREMENT PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL UNIQUE,
+    Name VARCHAR(255) NOT NULL,
     Description TEXT
 );
 LOAD DATA INFILE 'E:\\Data\\User Access Control\\Permissions.csv'
@@ -324,8 +322,7 @@ CREATE TABLE Reports (
     Name VARCHAR(255) NOT NULL,
     Type ENUM('Sales', 'Inventory', 'Customer') NOT NULL,
     GeneratedAtDate DATE,
-    Time TIME,
-    FOREIGN KEY (GeneratedBy) REFERENCES Users(UserID)
+    Time TIME
 );
 
 LOAD DATA INFILE 'E:\\Data\\Reporting and Analytics\\Reports.csv'
