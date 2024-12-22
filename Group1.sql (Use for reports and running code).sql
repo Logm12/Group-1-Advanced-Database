@@ -19,28 +19,15 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
-CREATE TABLE PaymentStatuses (
-  PaymentStatusID INT AUTO_INCREMENT PRIMARY KEY,
-  StatusName VARCHAR(50) NOT NULL
-);
-LOAD DATA INFILE 'E:\\Data\\Order_Management\\PaymentStatus.csv'
-INTO TABLE PaymentStatuses
-FIELDS TERMINATED BY ',' 
-ENCLOSED BY '"'
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS;
-
 CREATE TABLE Orders (
     OrderID INT AUTO_INCREMENT PRIMARY KEY,
     CustomerID INT,
-    PaymentStatusID INT,
     OrderDate DATE,
     Status VARCHAR(50),
     PaymentMethod VARCHAR(50),
     DeliveryDate DATE,
     ShippingAddress VARCHAR(255),
-    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
-    FOREIGN KEY (PaymentStatusID) REFERENCES PaymentStatuses(PaymentStatusID)
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
 );
 LOAD DATA INFILE 'E:\\Data\\Order_Management\\Orders(1).csv'
 INTO TABLE Orders
@@ -561,7 +548,6 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
-
 
 -- Use case: Inventory Management
 -- 1. Create New Order
