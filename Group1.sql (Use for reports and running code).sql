@@ -319,11 +319,12 @@ IGNORE 1 ROWS;
 -- 5. Reporting and Analytics
 CREATE TABLE Reports (
     ReportID INT AUTO_INCREMENT PRIMARY KEY,
+    UserID INT NOT NULL,
     Name VARCHAR(255) NOT NULL,
     GeneratedBY INT, 
     Type ENUM('Sales', 'Inventory', 'Customer') NOT NULL,
     GeneratedAtDate DATE,
-    Time TIME
+    Time TIME,
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
@@ -592,109 +593,66 @@ JOIN Routes r ON rp.RouteID = r.RouteID
 JOIN Vehicles v ON rp.VehicleID = v.VehicleID
 WHERE rp.DriverID = 1
 ORDER BY rp.StartTime ASC;
-
 -- Customer Management
 -- 1. Add new customer
 START TRANSACTION;
-
 INSERT INTO Customers (Name, PhoneNumber, Address, Email, DateOfBirth, Gender, JoinDate, LoyaltyPoints) 
 VALUES ('Nguyễn Văn An', '0901234567', '123 Đường Nguyễn Trãi, Hà Nội', 'nguyenvanan@gmail.com', '1990-01-01', 'Male', CURRENT_DATE, 0);
-
 COMMIT;
--- 2. Update customer information
-START TRANSACTION;
-
-UPDATE Customers 
-SET PhoneNumber = '0912345678', Address = '456 Đường Lê Lợi, Hà Nội', Email = 'nguyenvanbe@gmail.com' 
-WHERE CustomerID = 1;
-
-COMMIT;
--- 3. View Customer information
-SELECT * 
-FROM Customers 
-WHERE CustomerID = 3;
 -- 4. Analyze Customer Segments
-SELECT c.Name, cs.SegmentName, cb.ActionTypeID, COUNT(cb.ActionTypeID) AS ActionCount
+SELECT c.Name, cs.SegmentName, at.ActionName, COUNT(cb.ActionTypeID) AS ActionCount
 FROM Customers c
 JOIN CustomerSegmentMappings csm ON c.CustomerID = csm.CustomerID
 JOIN CustomerSegments cs ON csm.SegmentID = cs.SegmentID
 JOIN CustomerBehavior cb ON c.CustomerID = cb.CustomerID
-GROUP BY c.Name, cs.SegmentName, cb.ActionTypeID
+JOIN ActionTypes at ON cb.ActionTypeID = at.ActionTypeID
+GROUP BY c.Name, cs.SegmentName, at.ActionName
 ORDER BY cs.SegmentName, ActionCount DESC;
 -- Reporting and Analytics
--- 1. Generate Sales Report
-SELECT Orders.OrderID, Customers.Name, Orders.OrderDate, SUM(OrderDetails.Quantity * OrderDetails.Price) AS TotalAmount
-FROM Orders
-JOIN OrderDetails ON Orders.OrderID = OrderDetails.OrderID
-JOIN Customers ON Orders.CustomerID = Customers.CustomerID
-WHERE Orders.OrderDate BETWEEN '2024-01-01' AND '2024-12-31'
-GROUP BY Orders.OrderID, Customers.Name, Orders.OrderDate;
--- 2. View Orders by Status
-SELECT Status, COUNT(OrderID) AS OrderCount, SUM(OrderDetails.Quantity * OrderDetails.Price) AS TotalSales
-FROM Orders
-JOIN OrderDetails ON Orders.OrderID = OrderDetails.OrderID
-GROUP BY Status
-ORDER BY OrderCount DESC;
--- 3. Create View for Frequent Customers
+-- 1. View Daily User Registrations
+SELECT CreatedAtDate, COUNT(UserID) AS DailyCount 
+FROM Users 
+GROUP BY CreatedAtDate 
+ORDER BY CreatedAtDate DESC 
+LIMIT 7;
+-- 2. Create View for Frequent Customers
 CREATE VIEW FrequentCustomers AS
 SELECT Customers.CustomerID, Customers.Name, COUNT(Orders.OrderID) AS OrderCount, SUM(OrderDetails.Quantity * OrderDetails.Price) AS TotalSpent
 FROM Customers
 JOIN Orders ON Customers.CustomerID = Orders.CustomerID
 JOIN OrderDetails ON Orders.OrderID = OrderDetails.OrderID
 GROUP BY Customers.CustomerID, Customers.Name
-HAVING OrderCount > 5
+HAVING OrderCount >= 2
 ORDER BY TotalSpent DESC;
+SELECT * FROM FrequentCustomers;
 -- User Access Control
 -- 1. Assign User roles:
 START TRANSACTION;
-
 UPDATE Users 
-SET RoleID = (SELECT RoleID FROM Roles WHERE RoleName = 'Admin') 
+SET RoleID = (SELECT RoleID FROM Roles WHERE RoleName = 'Admin' LIMIT 1) 
 WHERE UserID = 1;
-
-COMMIT;
--- 2. View User Roles
-SELECT Users.Username, Roles.RoleName, Roles.Description 
-FROM Users
-JOIN Roles ON Users.RoleID = Roles.RoleID
-ORDER BY Roles.RoleName;
--- 3. Remove User
-START TRANSACTION;
-DELETE FROM Users 
-WHERE UserID = 2;
 COMMIT;
 
--- 4. Update User Permissions
-START TRANSACTION;
-INSERT INTO RolePermissions (RoleID, PermissionID) 
-VALUES ((SELECT RoleID FROM Roles WHERE RoleName = 'Admin'), (SELECT PermissionID FROM Permissions WHERE Name = 'View Reports'));
-COMMIT;
--- 5. Trigger for Automatic Role Assignment 
+SELECT * FROM Users;
+-- 2. Trigger for Automatic Role Assignment 
 DELIMITER //
-
 CREATE TRIGGER AutoAssignRole
 AFTER INSERT ON Users
 FOR EACH ROW
 BEGIN
     IF NEW.Email LIKE '%@company.com' THEN
         UPDATE Users
-        SET RoleID = (SELECT RoleID FROM Roles WHERE RoleName = 'Employee')
+        SET RoleID = (SELECT RoleID FROM Roles WHERE RoleName = 'Admin')
         WHERE UserID = NEW.UserID;
     END IF;
 END //
-
 DELIMITER ;
-
+-- Testing the Trigger
+INSERT INTO Users (Username, Email, Password, CreatedAtDate)
+VALUES ('Than Huy', 'thanhuy@gmail.com', 'admin13', CURDATE());
+SELECT * FROM Users WHERE Email = 'thanhuy@gmail.com';
 -- Multi-location Support
--- 1. Add new Location
-START TRANSACTION;
-
-INSERT INTO Locations (LocationName, Address) 
-VALUES ('Warehouse 2', '37 Đường Hoàng Quốc Việt, Hà Nội');
-
-COMMIT;
-
--- 2. Transfer Inventory Between Locations
+-- 1. Transfer Inventory Between Locations
 START TRANSACTION;
 
 UPDATE InventoryLocations 
@@ -702,35 +660,18 @@ SET Quantity = Quantity - 50
 WHERE ProductID = 202 AND LocationID = 1;
 
 INSERT INTO InventoryLocations (LocationID, ProductID, Quantity) 
-VALUES (2, 202, 50)
+VALUES (2, 4, 50)
 ON DUPLICATE KEY UPDATE Quantity = Quantity + 50;
 
 COMMIT;
-
+SELECT * FROM InventoryLocations;
 -- Mobile Access
 -- 1. Register Mobile Device
 START TRANSACTION;
-
 INSERT INTO MobileDevices (UserID, DeviceType, DeviceToken) 
-VALUES (1, 'iOS', 'abc123token');
-
+VALUES (2, 'Android', 'abc123token');
 COMMIT;
-
--- 2. Track Mobile Access Logs
-SELECT UserID, DeviceID, LocationID, AccessTime 
-FROM MobileAccessLogs 
-ORDER BY AccessTime DESC;
--- 3. Trigger for Mobile Device Registration Notification
-DELIMITER //
-
-CREATE TRIGGER DeviceRegistrationNotification
-AFTER INSERT ON MobileDevices
-FOR EACH ROW
-BEGIN
-    INSERT INTO Notifications (UserID, NotificationType, NotificationMessage, CreatedAtDate, CreatedAtTime)
-    VALUES (1, 'Device Registration', CONCAT('A new mobile device (', NEW.DeviceType, ') has been registered.'), CURRENT_DATE, CURRENT_TIME);
-END //
-
+SELECT * FROM MobileDevices;
 DELIMITER ;
 
 -- Integration with ERP
@@ -746,49 +687,20 @@ START TRANSACTION;
 
 UPDATE RealTimeInventory 
 SET StockQuantity = StockQuantity + 100, LastUpdated = CURRENT_DATE, Time = CURRENT_TIME 
-WHERE ProductID = 201;
+WHERE ProductID = 20;
 
 COMMIT;
-
+SELECT * FROM RealTimeInventory; 
 -- 2. View Real-time Orders
 SELECT rt.OrderID, rt.ProductID, rt.Quantity, os.StatusName, rt.CreatedAtDate, rt.CreatedAtTime, rt.UpdatedAtDate, rt.UpdatedAtTime
 FROM RealTimeOrders rt
 JOIN OrderStatuses os ON rt.OrderStatusID = os.OrderStatusID
 ORDER BY rt.UpdatedAtDate DESC, rt.UpdatedAtTime DESC;
-
--- 3. Generate Real-time Inventory Report
-SELECT ProductID, ProductName, StockQuantity, LastUpdated, Time 
-FROM RealTimeInventory
-ORDER BY StockQuantity DESC;
-
-UPDATE RealTimeOrders 
-SET OrderStatusID = 2 
-WHERE OrderID = 1;
 -- Audit Trail
--- 1. Log data changes
-DELIMITER //
-
-CREATE TRIGGER LogDataChanges
-AFTER INSERT OR UPDATE OR DELETE ON Orders
-FOR EACH ROW
-BEGIN
-    IF (OLD.OrderID IS NULL) THEN
-        INSERT INTO AuditTrails (TableName, ActionType, ChangedData, ChangedBy, ChangedAtDate, ChangedAtTime) 
-        VALUES ('Orders', 'INSERT', CONCAT('New Order ID: ', NEW.OrderID), USER(), CURRENT_DATE, CURRENT_TIME);
-    ELSEIF (NEW.OrderID IS NULL) THEN
-        INSERT INTO AuditTrails (TableName, ActionType, ChangedData, ChangedBy, ChangedAtDate, ChangedAtTime) 
-        VALUES ('Orders', 'DELETE', CONCAT('Deleted Order ID: ', OLD.OrderID), USER(), CURRENT_DATE, CURRENT_TIME);
-    ELSE
-        INSERT INTO AuditTrails (TableName, ActionType, ChangedData, ChangedBy, ChangedAtDate, ChangedAtTime) 
-        VALUES ('Orders', 'UPDATE', CONCAT('Updated Order ID: ', NEW.OrderID), USER(), CURRENT_DATE, CURRENT_TIME);
-    END IF;
-END //
-
-DELIMITER ;
 -- 2. Export Audit Log
 SELECT AuditID, TableName, ActionType, ChangedData, ChangedBy, ChangedAtDate, ChangedAtTime 
 FROM AuditTrails
-INTO OUTFILE 'E:\\Data\\Audit_Trail\\audit_log.csv'
+INTO OUTFILE 'E:\\Data\\Audit_Trail\\audit_log2.csv'
 FIELDS TERMINATED BY ',' 
 ENCLOSED BY '"' 
 LINES TERMINATED BY '\n';
@@ -796,7 +708,6 @@ LINES TERMINATED BY '\n';
 -- Notification
 -- 1. Send Order Status Notification
 DELIMITER //
-
 CREATE TRIGGER OrderStatusNotification
 AFTER UPDATE ON Orders
 FOR EACH ROW
@@ -808,30 +719,4 @@ BEGIN
     END IF;
 END //
 
-DELIMITER ;
--- 2. New customer registration alert
-DELIMITER //
 
-CREATE TRIGGER NewCustomerRegistration
-AFTER INSERT ON Customers
-FOR EACH ROW
-BEGIN
-    INSERT INTO Notifications (UserID, NotificationType, NotificationMessage, CreatedAtDate, CreatedAtTime)
-    VALUES (1, 'New Customer', CONCAT('A new customer has registered: ', NEW.Name), CURRENT_DATE, CURRENT_TIME);
-END //
-
-DELIMITER ;
-DELIMITER //
-
-CREATE TRIGGER AutoAssignRole
-AFTER INSERT ON Users
-FOR EACH ROW
-BEGIN
-    IF NEW.Email LIKE '%@company.com' THEN
-        UPDATE Users
-        SET RoleID = (SELECT RoleID FROM Roles WHERE RoleName = 'Employee')
-        WHERE UserID = NEW.UserID;
-    END IF;
-END //
-
-DELIMITER ;
