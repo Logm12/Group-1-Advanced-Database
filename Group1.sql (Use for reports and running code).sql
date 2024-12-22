@@ -536,6 +536,7 @@ CREATE TABLE Notifications (
     NotificationMessage TEXT NOT NULL,
     CreatedAtDate DATE,
     CreatedAtTime TIME,
+
     FOREIGN KEY (UserID) REFERENCES ers(UserID),
     FOREIGN KEY (NotificationStatusID) REFERENCES NotificationStatuses(NotificationStatusID)
 );
