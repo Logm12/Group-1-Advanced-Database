@@ -536,7 +536,8 @@ CREATE TABLE Notifications (
     NotificationMessage TEXT NOT NULL,
     CreatedAtDate DATE,
     CreatedAtTime TIME,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+
+    FOREIGN KEY (UserID) REFERENCES ers(UserID),
     FOREIGN KEY (NotificationStatusID) REFERENCES NotificationStatuses(NotificationStatusID)
 );
 LOAD DATA INFILE 'E:\\Data\\Notifications\\Notification1.csv'
@@ -545,7 +546,6 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
-
 -- Use case: Inventory Management
 -- 1. Create New Order
 -- 2. Update Order Status
