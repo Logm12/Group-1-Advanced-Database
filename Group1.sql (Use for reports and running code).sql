@@ -537,7 +537,7 @@ CREATE TABLE Notifications (
     CreatedAtDate DATE,
     CreatedAtTime TIME,
 
-    FOREIGN KEY (UserID) REFERENCES ers(UserID),
+    FOREIGN KEY (UserID) REFERENCES Uers(UserID),
     FOREIGN KEY (NotificationStatusID) REFERENCES NotificationStatuses(NotificationStatusID)
 );
 LOAD DATA INFILE 'E:\\Data\\Notifications\\Notification1.csv'
