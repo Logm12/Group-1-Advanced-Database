@@ -320,6 +320,7 @@ IGNORE 1 ROWS;
 CREATE TABLE Reports (
     ReportID INT AUTO_INCREMENT PRIMARY KEY,
     Name VARCHAR(255) NOT NULL,
+GeneratedBY INT, 
     Type ENUM('Sales', 'Inventory', 'Customer') NOT NULL,
     GeneratedAtDate DATE,
     Time TIME
