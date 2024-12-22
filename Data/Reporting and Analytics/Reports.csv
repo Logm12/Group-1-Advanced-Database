@@ -1,0 +1,21 @@
+Report_ID,Name,Type,Generated_at_date,Time
+1,Weekly Engagement,Customer,2024-07-18,13:12
+2,Monthly,Customer,2024-02-20,0:53
+3,Annual,Inventory,2024-02-29,20:55
+4,Weekly,Customer,2024-10-16,6:11
+5,Annual,Inventory,2024-05-24,1:46
+6,Monthly,Customer,2024-03-19,9:37
+7,Reorder,Inventory,2024-08-30,7:42
+8,Restock,Inventory,2024-03-11,22:06
+9,Interaction,Customer,2024-03-19,22:00
+10,Engagement,Customer,2024-09-03,19:46
+11,Weekly Engagement,Customer,2024-03-01,18:38
+12,Monthly,Customer,2024-05-19,1:56
+13,Annual,Inventory,2024-01-25,0:00
+14,Weekly,Customer,2024-05-28,16:53
+15,Annual,Inventory,2024-09-18,5:49
+16,Monthly,Customer,2024-03-19,23:04
+17,Reorder,Inventory,2024-06-16,6:58
+18,Restock,Inventory,2024-04-02,7:57
+19,Interaction,Customer,2024-01-22,23:39
+20,Engagement,Customer,2024-06-27,8:34

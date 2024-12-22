@@ -1,0 +1,21 @@
+Order_ID,Customer_ID,OrderDate,Status,Payment_method,Delivery_date,Shipping_address
+1,6,2024-01-09,cancelled,Cash,2023-04-12,Hai Phong
+2,7,2024-01-08,Processing,Cash,2023-08-19,Can Tho
+3,6,2024-01-22,cancelled,Cash,2023-11-03,333 Le Hong Phong Road
+4,11,2024-01-24,cancelled,Cash,2023-06-21,606 Tran Phu Street
+5,12,2024-01-11,cancelled,QR,2023-10-08,777 Tran Hung Dao Avenue
+6,2,2024-01-29,Processing,Credit card,2024-01-03,Da Nang
+7,14,2024-01-06,cancelled,QR,2023-02-06,Hanoi
+8,9,2024-01-08,cancelled,Cash,2023-04-13,456 Tran Hung Dao Street
+9,5,2024-01-17,cancelled,QR,2023-08-27,My Tho
+10,20,2024-01-18,shipped,Cash,2023-09-06,456 Tran Hung Dao Street
+11,10,2024-01-14,Processing,Cash,2023-11-21,222 Tran Quoc Toan Street
+12,5,2023-12-27,Processing,QR,2023-03-22,202 Pham Ngu Lao Road
+13,11,2024-01-13,Processing,Cash,2023-12-10,Nha Trang
+14,16,2024-01-16,cancelled,Cash,2023-06-19,222 Tran Quoc Toan Street
+15,9,2024-01-19,shipped,Credit card,2023-05-13,555 Hoang Van Thu Street
+16,20,2024-01-15,shipped,Cash,2023-07-31,Dong Hoi
+17,1,2024-01-08,cancelled,Cash,2023-05-17,Ho Chi Minh City
+18,6,2023-12-30,cancelled,Credit card,2023-05-05,Dong Hoi
+19,5,2024-01-02,shipped,QR,2023-05-25,666 Nguyen Cong Tru Street
+20,18,2024-01-22,Processing,Credit card,2024-01-16,333 Le Hong Phong Road

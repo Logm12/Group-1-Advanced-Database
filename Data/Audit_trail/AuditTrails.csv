@@ -1,0 +1,21 @@
+Audit_ID,Table_name,Action_type,Changed_data,Changed_by,Changed_at_date,Changed_at_time
+1,Sales 2,Insert,Vivamus.jpeg,lleney0,2017-02-04,7:59:00
+2,Product 2,Update,QuisquePortaVolutpat.doc,nfryett1,2024-01-13,11:24:00
+3,Sales 1,Insert,PedeJustoLacinia.avi,triddett2,2015-12-14,10:17:00
+4,Sales 4,Insert,Sapien.tiff,nbulled3,2019-03-10,1:38:00
+5,Product 3,Update,MetusSapien.gif,hcuttle4,2021-07-20,23:26:00
+6,Updates 1,Delete,EuOrciMauris.doc,cmallon5,2023-08-04,23:23:00
+7,Product 1,Delete,SapienNonMi.ppt,dluchelli6,2012-06-09,5:21:00
+8,Product 4,Update,Nullam.png,ddimitrie7,2012-10-02,8:39:00
+9,Updates 2,Insert,Odio.avi,kkalewe8,2012-10-11,11:10:00
+10,Sales 3,Delete,LigulaSit.xls,cscanlon9,2012-02-01,6:07:00
+11,Sales 2,Delete,LigulaSit.xls,lleney0,2012-02-01,7:59:00
+12,Sales 1,Update,MetusSapien.gif,kkalewe8,2012-06-09,10:17:00
+13,Product 3,Delete,Nullam.png,nbulled3,2015-12-14,23:26:00
+14,Updates 1,Insert,EuOrciMauris.doc,cmallon5,2017-02-04,5:21:00
+15,Updates 2,Insert,PedeJustoLacinia.avi,hcuttle4,2019-03-10,11:24:00
+16,Product 1,Delete,Sapien.tiff,dluchelli6,2012-10-11,8:39:00
+17,Product 4,Insert,Odio.avi,triddett2,2012-10-02,23:23:00
+18,Sales 3,Update,Vivamus.jpeg,cscanlon9,2024-01-13,1:38:00
+19,Sales 4,Update,QuisquePortaVolutpat.doc,ddimitrie7,2023-08-04,11:10:00
+20,Product 2,Insert,SapienNonMi.ppt,nfryett1,2021-07-20,6:07:00

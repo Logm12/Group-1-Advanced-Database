@@ -1,0 +1,21 @@
+Notification_ID,Notification_status_ID,User_ID,Notification_type,Notification_message,Create_At_date,Create_At_time
+1,18,12,Shipment,eu magna vulputate luctus cum sociis natoque penatibus et magnis,2024-12-16,5:06
+2,17,4,Order,ultrices posuere cubilia curae donec pharetra,2024-12-03,0:29
+3,3,5,Shipment,eros vestibulum ac est lacinia nisi venenatis tristique,2024-01-28,13:55
+4,16,8,Order,lobortis convallis tortor risus dapibus augue vel accumsan tellus,2024-09-19,23:42
+5,5,3,Shipment,tortor sollicitudin mi sit amet lobortis sapien,2024-06-21,17:37
+6,6,6,Order,tempus sit amet sem fusce consequat nulla,2024-12-08,20:57
+7,7,20,Order,eros vestibulum ac est lacinia nisi venenatis tristique,2024-11-10,15:48
+8,8,9,Order,pulvinar sed nisl nunc rhoncus dui,2023-12-27,6:31
+9,9,7,Order,eros viverra eget congue eget semper,2024-10-10,4:27
+10,20,1,Order,lobortis convallis tortor risus dapibus augue vel accumsan tellus,2024-01-12,3:54
+11,15,11,Shipment,ultrices posuere cubilia curae donec pharetra,2024-01-25,18:19
+12,12,2,Shipment,tempus sit amet sem fusce consequat nulla,2024-02-19,13:06
+13,13,13,Order,dolor morbi vel lectus in quam fringilla rhoncus,2024-10-22,23:22
+14,4,10,Shipment,dolor morbi vel lectus in quam fringilla rhoncus,2024-05-18,17:09
+15,10,15,Shipment,tortor sollicitudin mi sit amet lobortis sapien,2024-07-26,17:34
+16,14,19,Shipment,pulvinar sed nisl nunc rhoncus dui,2024-02-08,22:47
+17,11,17,Shipment,eros viverra eget congue eget semper,2023-12-26,23:49
+18,2,18,Shipment,eu magna vulputate luctus cum sociis natoque penatibus et magnis,2024-06-01,4:18
+19,1,14,Shipment,felis ut at dolor quis odio,2024-05-08,7:19
+20,19,16,Shipment,felis ut at dolor quis odio,2023-12-30,14:00

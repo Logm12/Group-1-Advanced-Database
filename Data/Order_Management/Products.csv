@@ -1,0 +1,21 @@
+ProductID,Name,Description,Price,StockQuantity,Reorderlevel,LastRestockDate
+1,GrowthGuard,Normal,4.17,18,8,2024-11-18
+2,VitaVigor,Good,7.57,75,2,2024-10-17
+3,PlantPower,Good,5.39,94,61,2024-11-01
+4,BloomBoost,Very good,4.01,80,98,2024-08-31
+5,NutriBoost,Very good,2.43,32,57,2024-10-23
+6,NourishNature,Bad,5.26,76,44,2024-04-04
+7,BloomBoost,Very bad,5.1,88,99,2024-12-03
+8,HarvestHero,Very bad,4.65,51,76,2024-07-05
+9,BloomBoost,Bad,3.71,58,74,2024-02-22
+10,GreenGrowth,Bad,6.13,63,72,2024-08-29
+11,PlantPower,Very good,1.43,37,62,2024-09-08
+12,BloomMagic,Very bad,3.47,12,37,2024-04-01
+13,RootRescue,Good,6.7,9,26,2024-09-07
+14,NutriBoost,Very good,2.52,90,31,2024-09-02
+15,FertileField,Normal,8.74,63,48,2024-03-21
+16,GreenGrowth,Bad,2.29,78,89,2024-12-14
+17,VitaVigor,Normal,7.41,94,18,2024-08-27
+18,FloraFusion,Good,1.09,53,91,2024-09-29
+19,GardenGold,Very bad,3.65,3,79,2024-07-31
+20,BlossomBlast,Normal,3.26,43,26,2024-03-30

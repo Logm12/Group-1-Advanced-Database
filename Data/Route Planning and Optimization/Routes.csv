@@ -1,0 +1,21 @@
+Route_ID,Route_type_ID,Driver Name,Total_distance(km),Estimated_time,Start_location,End_location
+1,12,Nguyen Van A,152,3.691871314,Ho Chi Minh City Warehouse,Can Tho
+2,15,Nguyen Van B,227,7.010522639,Rach Gia Warehouse,Ho Chi Minh City
+3,13,Ngo Thi H,1441,6.050990525,Sapa Warehouse,Pleiku
+4,16,Ngo Thi G,1185,3.75246689,Dong Hoi Warehouse,Ho Chi Minh City
+5,10,Vo Thi P,192,5.22162906,Long Xuyen Warehouse,Ha Noi
+6,17,Tang Thi T,853,5.299462035,Tam Ky Warehouse,Ho Chi Minh City
+7,7,Ngo Thi V,348,7.950678881,Mui Ne Warehouse,Can Tho
+8,18,Vo Thi N,1.8,3.010865791,Hanoi Warehouse,Ha Noi
+9,14,Dinh Van K,1902,5.388261643,Rach Gia Warehouse,Ha Noi
+10,20,Bui Van N,333,4.118997049,Phu Quoc Warehouse,My Tho
+11,11,Luong Thi N,603,1.190728806,Quy Nhon Warehouse,Ho Chi Minh City
+12,9,Luong Thi A,579,6.199313964,My Tho Warehouse,Pleiku
+13,8,Ngo Thi A,921,7.528353303,Da Nang Warehouse,Ho Chi Minh City
+14,6,Tran Thi B,1395,6.683373067,Nha Trang Warehouse,Ha Long
+15,5,Hoang Van N,663,3.851966857,Hue Warehouse,Ho Chi Minh City
+16,4,Luong Thi M,734,5.982939407,Hue Warehouse,Thai Nguyen
+17,3,Nguyen Van C,396,4.455512834,Phu Quoc Warehouse,Ho Chi Minh City
+18,2,Luong Thi D,568,7.650902516,Buon Ma Thuot Warehouse,Rach Gia
+19,19,Bui Van Y,350,1.991011114,Phan Thiet Warehouse,Long Xuyen
+20,1,Nguyen Van G,9.1,3.325741174,Ho Chi Minh City Warehouse,Ho 
