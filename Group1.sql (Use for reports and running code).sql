@@ -548,7 +548,7 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
--- Use case: Inventory Management
+-- Use case: Order Management
 -- 1. Create New Order
 START TRANSACTION;
 INSERT INTO Orders (CustomerID, OrderDate, Status, PaymentMethod, DeliveryDate, ShippingAddress)
@@ -569,17 +569,76 @@ JOIN Customers c ON o.CustomerID = c.CustomerID
 WHERE o.Status = 'cancelled'
 ORDER BY o.OrderDate;
 -- Use Case:  Inventory Tracking
--- 1. View Warehouse Inventory
-SELECT w.WarehouseID, w.Name AS WarehouseName, w.Location, i.Quantity, i.LastUpdated 
-FROM Warehouses w 
-LEFT JOIN InventoryItems i ON w.WarehouseID = i.WarehouseID;
--- 2. Generate Inventory Report
-SELECT w.Name AS WarehouseName, p.Name AS ProductName, SUM(i.Quantity) AS TotalQuantity
-FROM InventoryItems i
-JOIN Warehouses w ON i.WarehouseID = w.WarehouseID
-JOIN Products p ON i.ProductID = p.ProductID
-GROUP BY w.Name, p.Name
-ORDER BY w.Name, p.Name;
+-- 1. Update inventory when there are changes
+DELIMITER //
+CREATE PROCEDURE UpdateInventoryAfterOrder(IN order_id INT)
+BEGIN
+    DECLARE product_id INT;
+    DECLARE product_quantity INT;
+    DECLARE done INT DEFAULT 0;
+    
+    DECLARE product_cursor CURSOR FOR
+        SELECT ProductID, Quantity
+        FROM OrderDetails
+        WHERE OrderID = order_id;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+    OPEN product_cursor;
+    read_loop: LOOP
+        FETCH product_cursor INTO product_id, product_quantity;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        -- Update inventory quantity
+        UPDATE InventoryItems
+        SET Quantity = Quantity - product_quantity
+        WHERE ProductID = product_id;
+    END LOOP;
+    CLOSE product_cursor;
+END //
+DELIMITER ;
+
+SET SQL_SAFE_UPDATES = 0;
+
+CALL UpdateInventoryAfterOrder(1);
+
+SELECT * FROM InventoryItems WHERE ProductID IN (SELECT ProductID FROM OrderDetails WHERE OrderID = 1);
+ -- Performance
+ SET profiling = 1;
+CALL UpdateInventoryAfterOrder(1);
+SHOW PROFILES;
+
+-- Use case 2: Automatically warn when inventory is low
+DELIMITER $$
+CREATE TRIGGER CheckInventoryLevel
+AFTER UPDATE ON InventoryLocations
+FOR EACH ROW
+BEGIN
+    DECLARE productReorderLevel INT;
+    DECLARE productName VARCHAR(255);
+    DECLARE locationName VARCHAR(255);
+    DECLARE alertMessage VARCHAR(255);
+    -- Lấy giá trị ReorderLevel từ bảng Products
+    SELECT ReorderLevel INTO productReorderLevel
+    FROM Products
+    WHERE ProductID = NEW.ProductID;
+    -- Lấy tên sản phẩm và tên kho từ các bảng tương ứng
+    SELECT Name INTO productName
+    FROM Products
+    WHERE ProductID = NEW.ProductID;
+
+    SELECT LocationName INTO locationName
+    FROM Locations
+    WHERE LocationID = NEW.LocationID;
+    -- Tạo thông báo cảnh báo
+    SET alertMessage = CONCAT('ALERT: Stock for product "', productName, '" is low at Location "', locationName, '". Current stock: ', NEW.Quantity);
+    -- Kiểm tra nếu tồn kho dưới mức ReorderLevel, tạo cảnh báo
+    IF NEW.Quantity < productReorderLevel THEN
+        -- Ném ra một lỗi cảnh báo
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = alertMessage;
+    END IF;
+END $$
+DELIMITER ;
 -- Route Planning and Optimization
 -- 1. Automatic Route Plan Creation
 	 -- Stored Procedure (Create automatic delivery plans)
