@@ -581,18 +581,124 @@ JOIN Products p ON i.ProductID = p.ProductID
 GROUP BY w.Name, p.Name
 ORDER BY w.Name, p.Name;
 -- Route Planning and Optimization
--- 1. Assign Delivery Route
-START TRANSACTION;
-INSERT INTO RoutePlans (RouteID, VehicleID, DriverID, StartTime, EndTime) 
-VALUES (1, 1, 1, '08:00:00', '18:00:00');
-COMMIT;
--- 2. View Assigned Routes for a Driver
-SELECT rp.RoutePlanID, r.Name AS RouteName, v.LicensePlate, rp.StartTime, rp.EndTime 
-FROM RoutePlans rp
-JOIN Routes r ON rp.RouteID = r.RouteID
-JOIN Vehicles v ON rp.VehicleID = v.VehicleID
-WHERE rp.DriverID = 1
-ORDER BY rp.StartTime ASC;
+-- 1. Automatic Route Plan Creation
+	 -- Stored Procedure (Create automatic delivery plans)
+	DELIMITER $$
+	CREATE PROCEDURE CreateRoutePlan(
+		IN route_id INT,
+		IN start_time DATETIME,
+		IN end_time DATETIME,
+		IN driver_id INT,
+		IN vehicle_id INT
+	)
+	BEGIN
+		DECLARE vehicle_capacity INT;
+		DECLARE exit_handler_for_sqlstate CONDITION FOR SQLSTATE '45000';  -- Định nghĩa lỗi tùy chỉnh
+		-- Kiểm tra xem phương tiện có tồn tại hay không
+		SELECT Capacity INTO vehicle_capacity
+		FROM Vehicles
+		WHERE VehicleID = vehicle_id;
+		-- Nếu không tìm thấy phương tiện, báo lỗi
+		IF vehicle_capacity IS NULL THEN
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Vehicle not found';
+		END IF;
+		-- Chèn thông tin vào bảng RoutePlans
+		INSERT INTO RoutePlans (RouteID, DriverID, VehicleID, StartTime, EndTime)
+		VALUES (route_id, driver_id, vehicle_id, start_time, end_time);
+		-- Thông báo thành công
+		SELECT 'Route plan created successfully' AS Status;
+	END$$
+	DELIMITER ;
+
+	CALL CreateRoutePlan(2, '2024-12-23 09:00:00', '2024-12-23 17:00:00', 7, 3);
+
+	SELECT * FROM RoutePlans;
+	 -- Trigger (Check the capabilities of the vehicle and driver before creating a plan)
+	 DELIMITER $$
+	CREATE TRIGGER check_vehicle_and_driver_before_insert
+	BEFORE INSERT ON RoutePlans
+	FOR EACH ROW
+	BEGIN
+		-- Khai báo các biến
+		DECLARE vehicle_capacity INT;
+		DECLARE driver_exists INT;
+		-- Kiểm tra phương tiện có tồn tại không
+		SELECT Capacity INTO vehicle_capacity
+		FROM Vehicles
+		WHERE VehicleID = NEW.VehicleID;
+		-- Nếu phương tiện không tồn tại, báo lỗi
+		IF vehicle_capacity IS NULL THEN
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Vehicle not found';
+		END IF;
+		-- Kiểm tra lái xe có hợp lệ không
+		SELECT COUNT(*) INTO driver_exists
+		FROM Drivers
+		WHERE DriverID = NEW.DriverID;
+		-- Nếu lái xe không tồn tại, báo lỗi
+		IF driver_exists = 0 THEN
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Driver not found';
+		END IF;
+		-- Kiểm tra thời gian (start_time phải trước end_time)
+		IF NEW.StartTime >= NEW.EndTime THEN
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Start time must be before end time';
+		END IF;
+	END$$
+
+	DELIMITER ;
+
+	INSERT INTO RoutePlans (VehicleID, DriverID, StartTime, EndTime)
+	VALUES (9999, 1, '2024-12-23 09:00:00', '2024-12-23 17:00:00');
+
+	 -- View (Display delivery plan information)
+	CREATE OR REPLACE VIEW RoutePlansView AS
+	SELECT
+		rp.RoutePlanID,
+		rp.VehicleID,
+		v.Capacity AS VehicleCapacity,
+		rp.DriverID,
+		d.Name AS DriverName,  -- Giả sử tên cột đúng là 'Name' trong bảng 'Drivers'
+		rp.StartTime,
+		rp.EndTime
+	FROM
+		RoutePlans rp
+	JOIN Vehicles v ON rp.VehicleID = v.VehicleID
+	JOIN Drivers d ON rp.DriverID = d.DriverID;
+
+	SELECT * FROM RoutePlansView;
+	-- Performance of procedure 
+	SET profiling = 1;
+	CALL CreateRoutePlan(2, '2024-12-23 09:00:00', '2024-12-23 17:00:00', 7, 3);
+	SHOW PROFILE FOR QUERY 1;
+
+	-- Performance of trigger 
+	SET profiling = 1;
+	INSERT INTO RoutePlans (VehicleID, DriverID, StartTime, EndTime) VALUES (2, 1, '2024-12-23 09:00:00', '2024-12-23 17:00:00');
+	SHOW PROFILE FOR QUERY 1;
+	-- -- Performance of view 
+	EXPLAIN SELECT * FROM RoutePlansView;
+
+-- 2. Calculate total distance and delivery time for each route
+CREATE OR REPLACE VIEW RouteAnalytics AS
+SELECT 
+    rp.RouteID,
+    COUNT(DISTINCT rp.RoutePlanID) AS TotalPlans,         -- Tổng số kế hoạch giao hàng trên tuyến
+    SUM(r.TotalDistance) AS TotalDistance,               -- Tổng quãng đường giao hàng
+    TIMESTAMPDIFF(MINUTE, MIN(rp.StartTime), MAX(rp.EndTime)) AS TotalTimeSpent, -- Tổng thời gian trên tuyến
+    COUNT(DISTINCT o.OrderID) AS TotalOrders             -- Tổng số đơn hàng đã xử lý trên tuyến
+FROM 
+    RoutePlans rp
+JOIN 
+    Routes r ON rp.RouteID = r.RouteID
+LEFT JOIN 
+    Orders o ON o.Status = 'Delivered' AND rp.RouteID = r.RouteID -- Hoặc thay điều kiện JOIN khác nếu cần
+GROUP BY 
+    rp.RouteID; 
+SELECT * FROM RouteAnalytics;
+ -- Performance
+SET profiling = 1;
+SELECT SQL_NO_CACHE * FROM RouteAnalytics;
+SHOW PROFILES;
+
 -- Customer Management
 -- 1. Add new customer
 START TRANSACTION;
