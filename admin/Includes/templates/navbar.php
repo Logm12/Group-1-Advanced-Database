@@ -16,7 +16,7 @@
                     <div class="dropdown show">
                         <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fa fa-user"></i>
-                            <span class="username">Lock and Key</span>
+                            <span class="username">Settings</span>
                             <b class="caret"></b>
                         </a>
                         <!-- DROPDOWN MENU -->
@@ -46,7 +46,7 @@
                 <li class="main-li webpage-btn">
                     <a class="nav-item-button " href="../" target="_blank">
                         <i class="fas fa-eye"></i>
-                        <span>View website</span>
+                        <span>Main Page</span>
                     </a>
                 </li>
             </ul>
@@ -80,24 +80,29 @@
                 <div class="dropdown-divider"></div>
 
                 <li>
-                    <a href="orders.php" class="a-verMenu menu_categories_link">
+                    <a href="warehouses.php" class="a-verMenu menus_link">
+                        <i class="fas fa-list icon-ver"></i>
+                        <span style="padding-left:6px;">Warehouses</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="orders.php" class="a-verMenu gallery_link">
                         <i class="fas fa-list icon-ver"></i>
                         <span style="padding-left:6px;">Orders</span>
                     </a>
                 </li>
                 <li>
-                    <a href="warehouses.php" class="a-verMenu menus_link">
-                        <i class="fas fa-utensils icon-ver"></i>
-                        <span style="padding-left:6px;">Warehouses</span>
+                    <a href="Notifications.php" class="a-verMenu gallery_link">
+                        <i class="fas fa-list icon-ver"></i>
+                        <span style="padding-left:6px;">Notifications</span>
                     </a>
-                </li>
+                </li>                
                 <li>
-                    <a href="gallery.php" class="a-verMenu gallery_link">
-                        <i class="far fa-image icon-ver"></i>
-                        <span style="padding-left:6px;">Gallery</span>
+                    <a href="Analytic.php" class="a-verMenu gallery_link">
+                        <i class="fas fa-list icon-ver"></i>
+                        <span style="padding-left:6px;">Analytic</span>
                     </a>
-                </li>
-                
+                </li>                  
                 <div class="dropdown-divider"></div>
                 
                 <div class="sidenav-menu-heading">
