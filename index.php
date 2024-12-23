@@ -1,559 +1,165 @@
-<!-- PHP INCLUDES -->
-
 <?php
-
     include "connect.php";
     include 'Includes/functions/functions.php';
     include "Includes/templates/header.php";
     include "Includes/templates/navbar.php";
-
-
-    //Getting website settings
-
-    $stmt_web_settings = $con->prepare("SELECT * FROM website_settings");
-    $stmt_web_settings->execute();
-    $web_settings = $stmt_web_settings->fetchAll();
-
-    $restaurant_name = "";
-    $restaurant_email = "";
-    $restaurant_address = "";
-    $restaurant_phonenumber = "";
-
-    foreach ($web_settings as $option)
-    {
-        if($option['option_name'] == 'restaurant_name')
-        {
-            $restaurant_name = $option['option_value'];
-        }
-
-        elseif($option['option_name'] == 'restaurant_email')
-        {
-            $restaurant_email = $option['option_value'];
-        }
-
-        elseif($option['option_name'] == 'restaurant_phonenumber')
-        {
-            $restaurant_phonenumber = $option['option_value'];
-        }
-        elseif($option['option_name'] == 'restaurant_address')
-        {
-            $restaurant_address = $option['option_value'];
-        }
-    }
-
 ?>
 
-	<!-- HOME SECTION -->
+<!-- HOME SECTION -->
+<section class="home-section" id="home">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 home-left-section">
+                <div style="padding: 100px 0px; color: black;">
+                    <h1>High-quality fertilizers</h1>
+                    <h2>Helping Plants Grow Best</h2>
+                    <hr>
+                    <p>We provide the best fertilizers for your plants.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-	<section class="home-section" id="home">
-		<div class="container">
-			<div class="row" style="flex-wrap: nowrap;">
-				<div class="col-md-6 home-left-section">
-					<div style="padding: 100px 0px; color: white;">
-						<h1>
-							VNU Restaurant.
-						</h1>
-						<h2>
-							MAKING PEOPLE HAPPY
-						</h2>
-						<hr>
-						<p>
-							Italian Pizza With Cherry Tomatoes and Green Basil  
-						</p>
-						<div style="display: flex;">
-							<a href="order_food.php" target="_blank" class="bttn_style_1" style="margin-right: 10px; display: flex;justify-content: center;align-items: center;">
-								Order Now
-								<i class="fas fa-angle-right"></i>
-							</a>
-							<a href="#menus" class="bttn_style_2" style="display: flex;justify-content: center;align-items: center;">
-								VIEW MENU
-								<i class="fas fa-angle-right"></i>
-							</a>
-						</div>
-					</div>
-				</div>
-				
-			</div>
-		</div>
-	</section>
+<!-- OUR PRODUCTS SECTION -->
+<section class="our_products" id="products">
+    <div class="container">
+        <h2 style="text-align: center; margin-bottom: 30px">Our Products</h2>
+        <div class="row">
+            <?php
+                // Fetch products from the database
+                $stmt_products = $con->prepare("SELECT ProductID, Name, Description, Price, StockQuantity FROM Products");
+                $stmt_products->execute();
+                $rows_products = $stmt_products->fetchAll();
 
-	<!-- OUR QUALITIES SECTION -->
-
-	<section class="our_qualities" style="padding:100px 0px;">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-4">
-					<div class="our_qualities_column">
-	                    <img src="Design/images/quality_food_img.png" >
-	                    <div class="caption">
-	                        <h3>
-	                            Quality Foods
-	                        </h3>
-	                        <p>
-	                        	VERY GOOD! VERY GOOD! VERY GOOD! VERY GOOD! VERY GOOD! VERY GOOD! VERY GOOD! VERY GOOD! 
-	                        </p>
-	                    </div>
-	                </div>
-				</div>
-				<div class="col-md-4">
-					<div class="our_qualities_column">
-	                    <img src="Design/images/fast_delivery_img.png" >
-	                    <div class="caption">
-	                        <h3>
-	                            Quality Foods
-	                        </h3>
-	                        <p>
-							VERY GOOD! VERY GOOD! VERY GOOD! VERY GOOD! VERY GOOD! VERY GOOD! VERY GOOD! VERY GOOD! 
-	                        </p>
-	                    </div>
-	                </div>
-				</div>
-				<div class="col-md-4">
-					<div class="our_qualities_column">
-	                    <img src="Design/images/original_taste_img.png" >
-	                    <div class="caption">
-	                        <h3>
-	                            Quality Foods
-	                        </h3>
-	                        <p>
-							VERY GOOD! VERY GOOD! VERY GOOD! VERY GOOD! VERY GOOD! VERY GOOD! VERY GOOD! VERY GOOD! 
-	                        </p>
-	                    </div>
-	                </div>
-				</div>
-
-			</div>
-		</div>
-	</section>
-
-	<!-- OUR MENUS SECTION -->
-
-	<section class="our_menus" id="menus">
-		<div class="container">
-			<h2 style="text-align: center;margin-bottom: 30px">DISCOVER OUR MENUS</h2>
-			<div class="menus_tabs">
-				<div class="menus_tabs_picker">
-					<ul style="text-align: center;margin-bottom: 70px">
-						<?php
-
-	                        $stmt = $con->prepare("Select * from menu_categories");
-	                        $stmt->execute();
-	                        $rows = $stmt->fetchAll();
-	                        $count = $stmt->rowCount();
-
-	                        $x = 0;
-
-	                        foreach($rows as $row)
-	                        {
-	                        	if($x == 0)
-	                        	{
-	                        		echo "<li class = 'menu_category_name tab_category_links active_category' onclick=showCategoryMenus(event,'".str_replace(' ', '', $row['category_name'])."')>";
-	                        			echo $row['category_name'];
-	                        		echo "</li>";
-
-	                        	}
-	                        	else
-	                        	{
-	                        		echo "<li class = 'menu_category_name tab_category_links' onclick=showCategoryMenus(event,'".str_replace(' ', '', $row['category_name'])."')>";
-	                        			echo $row['category_name'];
-	                        		echo "</li>";
-	                        	}
-
-	                        	$x++;
-	                     		
-	                        }
-						?>
-					</ul>
-				</div>
-
-				<div class="menus_tab">
-					<?php
-                
-                        $stmt = $con->prepare("Select * from menu_categories");
-                        $stmt->execute();
-                        $rows = $stmt->fetchAll();
-                        $count = $stmt->rowCount();
-
-                        $i = 0;
-
-                        foreach($rows as $row) 
-                        {
-
-                            if($i == 0)
-                            {
-
-                                echo '<div class="menu_item  tab_category_content" id="'.str_replace(' ', '', $row['category_name']).'" style=display:block>';
-
-                                    $stmt_menus = $con->prepare("Select * from menus where category_id = ?");
-                                    $stmt_menus->execute(array($row['category_id']));
-                                    $rows_menus = $stmt_menus->fetchAll();
-
-                                    if($stmt_menus->rowCount() == 0)
-                                    {
-                                        echo "<div style='margin:auto'>No Available Menus for this category!</div>";
-                                    }
-
-                                    echo "<div class='row'>";
-	                                    foreach($rows_menus as $menu)
-	                                    {
-	                                        ?>
-
-	                                            <div class="col-md-4 col-lg-3 menu-column">
-	                                                <div class="thumbnail" style="cursor:pointer">
-	                                                    <?php $source = "admin/Uploads/images/".$menu['menu_image']; ?>
-
-	                                                    <div class="menu-image">
-													        <div class="image-preview">
-													            <div style="background-image: url('<?php echo $source; ?>');"></div>
-													        </div>
-													    </div>
-														                                                    
-	                                                    <div class="caption">
-	                                                        <h5>
-	                                                            <?php echo $menu['menu_name'];?>
-	                                                        </h5>
-	                                                        <p>
-	                                                            <?php echo $menu['menu_description']; ?>
-	                                                        </p>
-	                                                        <span class="menu_price">
-	                                                        	<?php echo "$".$menu['menu_price']; ?>
-	                                                        </span>
-	                                                    </div>
-	                                                </div>
-	                                            </div>
-
-	                                        <?php
-	                                    }
-	                                echo "</div>";
-
-                                echo '</div>';
-
-                            }
-
-                            else
-                            {
-
-                                echo '<div class="menus_categories  tab_category_content" id="'.str_replace(' ', '', $row['category_name']).'">';
-
-                                    $stmt_menus = $con->prepare("Select * from menus where category_id = ?");
-                                    $stmt_menus->execute(array($row['category_id']));
-                                    $rows_menus = $stmt_menus->fetchAll();
-
-                                    if($stmt_menus->rowCount() == 0)
-                                    {
-                                        echo "<div class = 'no_menus_div'>No Available Menus for this category!</div>";
-                                    }
-
-                                    echo "<div class='row'>";
-	                                    foreach($rows_menus as $menu)
-	                                    {
-	                                        ?>
-
-	                                            <div class="col-md-4 col-lg-3 menu-column">
-	                                                <div class="thumbnail" style="cursor:pointer">
-	                                                	<?php $source = "admin/Uploads/images/".$menu['menu_image']; ?>
-	                                                    <div class="menu-image">
-													        <div class="image-preview">
-													            <div style="background-image: url('<?php echo $source; ?>');"></div>
-													        </div>
-													    </div>
-	                                                    <div class="caption">
-	                                                        <h5>
-	                                                            <?php echo $menu['menu_name'];?>
-	                                                        </h5>
-	                                                        <p>
-	                                                            <?php echo $menu['menu_description']; ?>
-	                                                        </p>
-	                                                        <span class="menu_price">
-	                                                        	<?php echo "$".$menu['menu_price']; ?>
-	                                                        </span>
-	                                                    </div>
-	                                                </div>
-	                                            </div>
-
-	                                        <?php
-	                                    }
-	                               	echo "</div>";
-
-                                echo '</div>';
-
-                            }
-
-                            $i++;
-                            
-                        }
-                    
-                        echo "</div>";
-                
+                // Loop through each product
+                foreach($rows_products as $product) {
                     ?>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<!-- IMAGE GALLERY -->
-
-	<section class="image-gallery" id="gallery">
-		<div class="container">
-			<h2 style="text-align: center;margin-bottom: 30px">IMAGE GALLERY</h2>
-			<?php
-				$stmt_image_gallery = $con->prepare("Select * from image_gallery");
-                $stmt_image_gallery->execute();
-                $rows_image_gallery = $stmt_image_gallery->fetchAll();
-
-                echo "<div class = 'row'>";
-
-	                foreach($rows_image_gallery as $row_image_gallery)
-	                {
-	                	echo "<div class = 'col-md-4 col-lg-3' style = 'padding: 15px;'>";
-	                		$source = "admin/Uploads/images/".$row_image_gallery['image'];
-	                		?>
-
-	                		<div style = "background-image: url('<?php echo $source; ?>') !important;background-repeat: no-repeat;background-position: 50% 50%;background-size: cover;background-clip: border-box;box-sizing: border-box;overflow: hidden;height: 230px;">
-	                		</div>
-
-	                		<?php
-	                	echo "</div>";
-	                }
-
-	            echo "</div>";
-			?>
-		</div>
-	</section>
-
-	<!-- CONTACT US SECTION -->
-
-	<section class="contact-section" id="contact">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6 sm-padding">
-                    <div class="contact-info">
-                        <h2>
-                            Get in touch with us & 
-                            <br>send us message today!
-                        </h2>
-                        <p>
-              Best dish you could ever had!
-                        </p>
-                        
-                    </div>
-                </div>
-                <div class="col-lg-6 sm-padding">
-                    <div class="contact-form">
-                        <div id="contact_ajax_form" class="contactForm">
-                            <div class="form-group colum-row row">
-                                <div class="col-sm-6">
-                                    <input type="text" id="contact_name" name="name" oninput="document.getElementById('invalid-name').innerHTML = ''" onkeyup="this.value=this.value.replace(/[^\sa-zA-Z]/g,'');" class="form-control" placeholder="Name">
-                                    <div class="invalid-feedback" id="invalid-name" style="display: block">
-                                    	
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <input type="email" id="contact_email" name="email" oninput="document.getElementById('invalid-email').innerHTML = ''" class="form-control" placeholder="Email">
-                                    <div class="invalid-feedback" id="invalid-email" style="display: block">
-                                    	
-                                    </div>
+                    <div class="col-md-4 col-lg-3 product-column">
+                        <div class="thumbnail" style="cursor:pointer">
+                            <div class="product-image">
+                                <div class="image-preview">
+                                    <!-- Placeholder for product image -->
+                                    <div style="background-color: #f0f0f0; height: 200px;"></div>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <div class="col-md-12">
-                                    <input type="text" id="contact_subject" name="subject" oninput="document.getElementById('invalid-subject').innerHTML = ''" onkeyup="this.value=this.value.replace(/[^\sa-zA-Z]/g,'');" class="form-control" placeholder="Subject">
-                                    <div class="invalid-feedback" id="invalid-subject" style="display: block">
-                                    	
-                                    </div>
-                                </div>
+                            <div class="caption">
+                                <h5><?php echo htmlspecialchars($product['Name']); ?></h5>
+                                <p><?php echo htmlspecialchars($product['Description']); ?></p>
+                                <span class="product_price"><?php echo "$" . number_format($product['Price'], 2); ?></span><br>
+                                <span class="product_stock">Stock: <?php echo $product['StockQuantity']; ?></span>
+                                <button class="bttn_style_2 order_button" data-product-id="<?php echo $product['ProductID']; ?>">Order Now!</button>
                             </div>
-                            <div class="form-group row">
-                                <div class="col-md-12">
-                                    <textarea id="contact_message" name="message" oninput="document.getElementById('invalid-message').innerHTML = ''" cols="30" rows="5" class="form-control message" placeholder="Message"></textarea>
-                                    <div class="invalid-feedback" id="invalid-message" style="display: block">
-                                    	
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-md-12">
-                                    <button id="contact_send" class="bttn_style_2">Send Message</button>
-                                </div>
-                            </div>
-                            <div id="sending_load" style="display: none;">Sending...</div>
-                            <div id="contact_status_message"></div>
                         </div>
                     </div>
-                </div>
-            </div>
+                    <?php
+                }
+            ?>
         </div>
-    </section>
+    </div>
+</section>
 
-	<!-- OUR QUALITIES SECTION -->
-	
-	<section class="our_qualities_v2">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-4" style="padding: 10px;">
-					<div class="quality quality_1">
-						<div class="text_inside_quality">
-							<h5>Quality Foods</h5>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4" style="padding: 10px;">
-					<div class="quality quality_2">
-						<div class="text_inside_quality">
-							<h5>Fastest Delivery</h5>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4" style="padding: 10px;">
-					<div class="quality quality_3">
-						<div class="text_inside_quality">
-							<h5>Original Recipes</h5>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
+<!-- OUR ROUTES SECTION -->
+<section class="our_routes" id="routes">
+    <div class="container">
+        <h2 style="text-align: center; margin-bottom: 30px">Delivery Routes</h2>
 
-	<!-- WIDGET SECTION / FOOTER -->
+        <!-- Add New Route Form -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <form id="addRouteForm" style="display: inline-block; max-width: 600px;">
+                <input type="text" name="Name" placeholder="Route Name" required>
+                <input type="text" name="StartLocation" placeholder="Start Location" required>
+                <input type="text" name="EndLocation" placeholder="End Location" required>
+                <input type="number" step="0.01" name="TotalDistance" placeholder="Total Distance (km)" required>
+                <input type="number" step="0.01" name="EstimatedTime" placeholder="Estimated Time (hours)" required>
+                <button type="submit" class="btn btn-success">Add New Route</button>
+            </form>
+        </div>
 
-    <section class="widget_section" style="background-color: #222227;padding: 100px 0;">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3 col-md-6">
-                    <div class="footer_widget">
-                        <img src="Design/images/restaurant-logo.png" alt="Restaurant Logo" style="width: 150px;margin-bottom: 20px;">
-                        <p>
-                            Our Restaurnt is one of the bests, provide tasty Menus and Dishes. You can reserve a table or Order food.
-                        </p>
-                        <ul class="widget_social">
-                            <li><a href="#" data-toggle="tooltip" title="Facebook"><i class="fab fa-facebook-f fa-2x"></i></a></li>
-                            <li><a href="#" data-toggle="tooltip" title="Twitter"><i class="fab fa-twitter fa-2x"></i></a></li>
-                            <li><a href="#" data-toggle="tooltip" title="Instagram"><i class="fab fa-instagram fa-2x"></i></a></li>
-                            <li><a href="#" data-toggle="tooltip" title="LinkedIn"><i class="fab fa-linkedin fa-2x"></i></a></li>
-                            <li><a href="#" data-toggle="tooltip" title="Google+"><i class="fab fa-google-plus-g fa-2x"></i></a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                     <div class="footer_widget">
-                        <h3>Headquarters</h3>
-                        <p>
-                            <?php echo $restaurant_address; ?>
-                        </p>
-                        <p>
-                            <?php echo $restaurant_email; ?>
-                            <br>
-                            <?php echo $restaurant_phonenumber; ?>   
-                        </p>
-                     </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="footer_widget">
-                        <h3>
-                            Opening Hours
-                        </h3>
-                        <ul class="opening_time">
-                            <li>Monday - Friday 11:30am - 2:008pm</li>
-                            <li>Monday - Friday 11:30am - 2:008pm</li>
-                            <li>Monday - Friday 11:30am - 2:008pm</li>
-                            <li>Monday - Friday 11:30am - 2:008pm</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="footer_widget">
-                        <h3>Subscribe to our contents</h3>
-                        <div class="subscribe_form">
-                            <form action="#" class="subscribe_form" novalidate="true">
-                                <input type="email" name="EMAIL" id="subs-email" class="form_input" placeholder="Email Address...">
-                                <button type="submit" class="submit">SUBSCRIBE</button>
-                                <div class="clearfix"></div>
-                            </form>
+        <div class="row" id="routesContainer">
+            <?php
+                // Fetch routes from the database
+                $stmt_routes = $con->prepare("SELECT r.RouteID, r.Name, r.TotalDistance, r.EstimatedTime, r.StartLocation, r.EndLocation 
+                                            FROM Routes r");
+                $stmt_routes->execute();
+                $rows_routes = $stmt_routes->fetchAll();
+
+                // Check if there are routes
+                if (empty($rows_routes)) {
+                    echo "<p style='text-align: center; color: red;'>No routes found. Add a new route to get started.</p>";
+                } else {
+                    // Loop through each route and display it
+                    foreach($rows_routes as $route) {
+                        ?>
+                        <div class="col-md-4 col-lg-3 route-column" data-route-id="<?php echo $route['RouteID']; ?>">
+                            <div class="thumbnail">
+                                <div class="route-details">
+                                    <h5 contenteditable="true" class="editable-route" data-field="Name"><?php echo htmlspecialchars($route['Name']); ?></h5>
+                                    <p><strong>Start Location:</strong> <span contenteditable="true" class="editable-route" data-field="StartLocation"><?php echo htmlspecialchars($route['StartLocation']); ?></span></p>
+                                    <p><strong>End Location:</strong> <span contenteditable="true" class="editable-route" data-field="EndLocation"><?php echo htmlspecialchars($route['EndLocation']); ?></span></p>
+                                    <p><strong>Distance:</strong> <span contenteditable="true" class="editable-route" data-field="TotalDistance"><?php echo number_format($route['TotalDistance'], 2); ?></span> km</p>
+                                    <p><strong>Estimated Time:</strong> <span contenteditable="true" class="editable-route" data-field="EstimatedTime"><?php echo number_format($route['EstimatedTime'], 2); ?></span> hours</p>
+                                    <div class="route-actions">
+                                        <button class="btn btn-danger btn-sm delete-route" data-route-id="<?php echo $route['RouteID']; ?>">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
+                        <?php
+                    }
+                }
+            ?>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- FOOTER BOTTOM  -->
+<script>
+    // Add New Route
+    document.getElementById('addRouteForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch('ajax_routes.php?action=add', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('routesContainer').innerHTML = data;
+            this.reset();
+        });
+    });
 
-    <?php include "Includes/templates/footer.php"; ?>
+    // Inline Edit Route
+    document.addEventListener('blur', function (e) {
+        if (e.target.classList.contains('editable-route')) {
+            const routeID = e.target.closest('.route-column').dataset.routeId;
+            const field = e.target.dataset.field;
+            const value = e.target.textContent.trim();
 
-    <script type="text/javascript">
+            fetch('ajax_routes.php?action=edit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ RouteID: routeID, field: field, value: value })
+            });
+        }
+    }, true);
 
-	    $(document).ready(function()
-	    {
-	        $('#contact_send').click(function()
-	        {
-	            var contact_name = $('#contact_name').val();
-	            var contact_email = $('#contact_email').val();
-	            var contact_subject = $('#contact_subject').val();
-	            var contact_message = $('#contact_message').val();
+    // Delete Route
+    document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('delete-route')) {
+            if (confirm('Are you sure you want to delete this route?')) {
+                const routeID = e.target.dataset.routeId;
 
-	            var flag = 0;
-
-	            if($.trim(contact_name) == "")
-	            {
-	            	$('#invalid-name').text('This is a required field!');
-	            	flag = 1;
-	            }
-	            else
-	            {
-	            	if(contact_name.length < 5)
-	            	{
-	            		$('#invalid-name').text('Length is less than 5 letters!');
-	            		flag = 1;
-	            	}
-	            }
-
-	            if(!ValidateEmail(contact_email))
-	            {
-	            	$('#invalid-email').text('Invalid e-mail!');
-	            	flag = 1;
-	            }
-
-	            if($.trim(contact_subject) == "")
-	            {
-	            	$('#invalid-subject').text('This is a required field!');
-	            	flag = 1;
-	            }
-
-	            if($.trim(contact_message) == "")
-	            {
-	            	$('#invalid-message').text('This is a required field!');
-	            	flag = 1;
-	            }
-
-	            if(flag == 0)
-	            {
-	            	$('#sending_load').show();
-
-		            $.ajax({
-		                url: "Includes/php-files-ajax/contact.php",
-		                type: "POST",
-		                data:{contact_name:contact_name, contact_email:contact_email, contact_subject:contact_subject, contact_message:contact_message},
-		                success: function (data) 
-		                {
-		                	$('#contact_status_message').html(data);
-		                },
-		                beforeSend: function()
-		                {
-					        $('#sending_load').show();
-					    },
-					    complete: function()
-					    {
-					        $('#sending_load').hide();
-					    },
-		                error: function(xhr, status, error) 
-		                {
-		                    alert("Internal ERROR has occured, please, try later!");
-		                }
-		            });
-	            }
-	            
-	        });
-	    }); 
-	    
-	</script>
+                fetch('ajax_routes.php?action=delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ RouteID: routeID })
+                })
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('routesContainer').innerHTML = data;
+                });
+            }
+        }
+    });
+</script>
