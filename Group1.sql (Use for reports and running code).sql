@@ -759,12 +759,28 @@ SELECT SQL_NO_CACHE * FROM RouteAnalytics;
 SHOW PROFILES;
 
 -- Customer Management
--- 1. Add new customer
-START TRANSACTION;
-INSERT INTO Customers (Name, PhoneNumber, Address, Email, DateOfBirth, Gender, JoinDate, LoyaltyPoints) 
-VALUES ('Nguyễn Văn An', '0901234567', '123 Đường Nguyễn Trãi, Hà Nội', 'nguyenvanan@gmail.com', '1990-01-01', 'Male', CURRENT_DATE, 0);
-COMMIT;
--- 4. Analyze Customer Segments
+-- 1.  Record customer behavior
+DELIMITER //
+CREATE TRIGGER RecordCustomerBehaviorAfterOrder
+AFTER INSERT ON Orders
+FOR EACH ROW
+BEGIN
+    DECLARE actionTypeID INT;
+    DECLARE currentTime TIME;
+    DECLARE currentDate DATE;
+    -- Lấy ActionTypeID từ bảng ActionTypes 
+    SELECT ActionTypeID INTO actionTypeID
+    FROM ActionTypes
+    WHERE ActionName = 'Order placed';  -- Hoặc bạn có thể thay đổi hành động ở đây
+    -- Lấy thời gian và ngày hiện tại
+    SET currentTime = CURRENT_TIME;
+    SET currentDate = CURRENT_DATE;
+    -- Ghi nhận hành vi của khách hàng vào bảng CustomerBehavior
+    INSERT INTO CustomerBehavior (CustomerID, ActionTypeID, ActionDate, Time)
+    VALUES (NEW.CustomerID, actionTypeID, currentDate, currentTime);
+END//
+DELIMITER ;
+-- 2. Analyze Customer Segments
 SELECT c.Name, cs.SegmentName, at.ActionName, COUNT(cb.ActionTypeID) AS ActionCount
 FROM Customers c
 JOIN CustomerSegmentMappings csm ON c.CustomerID = csm.CustomerID
