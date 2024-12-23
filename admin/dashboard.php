@@ -91,12 +91,12 @@
                                     <i class="far fa-calendar-alt fa-4x"></i>
                                 </div>
                                 <div class="col-sm-9 text-right">
-                                    <div class="huge"><span>20</span></div>
-                                    <div>Total Suppliers</div>
+                                    <div class="huge"><span><?php echo countItems("UserID","Users")?></span></div>
+                                    <div>Total Users</div>
                                 </div>
                             </div>
                         </div>
-                        <a href="#">
+                        <a href="users.php">
                             <div class="panel-footer">
                                 <span class="pull-left">View Details</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -242,11 +242,11 @@ foreach ($Orders as $order) {
     echo "</td>";
     echo "<td>";
     ?>
-    <button class="btn btn-info btn-sm rounded-0" type="button" data-toggle="modal" data-target="#customer_<?php echo $order['customer_id']; ?>" data-placement="top">
-        <?php echo $order['customer_id']; ?>
-    </button>
+ <button class="btn btn-info btn-sm rounded-0" type="button" data-toggle="modal" data-target="#customer_<?php echo $order['customer_id']; ?>" data-placement="top">
+    <?php echo $order['customer_id']; ?>
+</button>
 <!-- Customer Modal -->
-<div class="modal fade" id="<?php echo "Customer_".$order['customer_id']; ?>" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="customer_<?php echo $order['customer_id']; ?>" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -257,9 +257,21 @@ foreach ($Orders as $order) {
             </div>
             <div class="modal-body">
                 <ul>
-                    <li><span style="font-weight: bold;">Full name: </span> <?php echo $order['customer_name']; ?></li> 
-                    <li><span style="font-weight: bold;">Phone number: </span><?php echo $order['customer_phone']; ?></li> 
-                    <li><span style="font-weight: bold;">E-mail: </span><?php echo $order['customer_email']; ?></li> 
+                    <?php
+                    // Lấy thông tin khách hàng từ cơ sở dữ liệu
+                    $customerStmt = $con->prepare("SELECT * FROM Customers WHERE CustomerID = ?");
+                    $customerStmt->execute([$order['customer_id']]);
+                    $customer = $customerStmt->fetch();
+
+                    if ($customer) {
+                        // Hiển thị thông tin khách hàng
+                        echo "<li><span style='font-weight: bold;'>Full name: </span> " . htmlspecialchars($customer['Name']) . "</li>"; 
+                        echo "<li><span style='font-weight: bold;'>Phone number: </span>" . htmlspecialchars($customer['PhoneNumber']) . "</li>"; 
+                        echo "<li><span style='font-weight: bold;'>E-mail: </span>" . htmlspecialchars($customer['Email']) . "</li>"; 
+                    } else {
+                        echo "<li>No customer details found.</li>";
+                    }
+                    ?>
                 </ul>
             </div>
         </div>
@@ -473,7 +485,7 @@ echo "</tr>";
                 echo "<tr>";
                 echo "<td>" . htmlspecialchars($row['OrderDate']) . "</td>";
                 echo "<td>" . htmlspecialchars($row['Name']) . "</td>";
-                echo "<td>" . htmlspecialchars($row['Status']) . "</td>"; // Giả sử Status chứa lý do hủy
+                echo "<td>" . htmlspecialchars($row['Status']) . "</td>";
                 echo "</tr>";
             }
         }

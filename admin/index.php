@@ -22,11 +22,11 @@ include 'Includes/templates/header.php';
         // Kiểm tra nếu người dùng nhấn nút submit
         if (isset($_POST['admin_login'])) {
             $username = test_input($_POST['Username']);
-            $password = test_input($_POST['PasswordHash']);
+            $password = test_input($_POST['Password']); // Đổi tên từ PasswordHash thành Password
             $hashedPass = $password; // Giả sử mật khẩu đã được băm trước khi lưu vào cơ sở dữ liệu
 
             // Kiểm tra xem người dùng có tồn tại trong cơ sở dữ liệu không
-            $stmt = $con->prepare("SELECT UserID, Username, PasswordHash FROM Users WHERE Username = ? AND PasswordHash = ?");
+            $stmt = $con->prepare("SELECT UserID, Username, Password FROM Users WHERE Username = ? AND Password = ?"); // Đổi PasswordHash thành Password
             $stmt->execute(array($username, $hashedPass));
             $row = $stmt->fetch();
             $count = $stmt->rowCount();
@@ -35,7 +35,7 @@ include 'Includes/templates/header.php';
             if ($count > 0) {
                 $_SESSION['username'] = $username; // Lưu tên người dùng vào phiên
                 $_SESSION['password'] = $password; // Lưu thông tin admin vào phiên
-                $_SESSION['userid'] = $row['UserID']; // Lưu ID người dùng vào phiên
+                $_SESSION['userid'] = $row['User ID']; // Lưu ID người dùng vào phiên
                 header('Location: dashboard.php');
                 die();
             } else {
@@ -63,7 +63,7 @@ include 'Includes/templates/header.php';
         <!-- PASSWORD INPUT -->
         <div class="form-input">
             <span class="txt1">Password</span>
-            <input type="password" name="PasswordHash" class="form-control" oninput="document.getElementById('password_required').style.display = 'none'" id="password" autocomplete="new-password">
+            <input type="password" name="Password" class="form-control" oninput="document.getElementById('password_required').style.display = 'none'" id="password" autocomplete="new-password"> <!-- Đổi tên từ PasswordHash thành Password -->
             <div class="invalid-feedback" id="password_required">Password is required!</div>
         </div>
 

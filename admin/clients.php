@@ -25,7 +25,7 @@ if (isset($_SESSION['username']) && isset($_SESSION['password'])) {
 
     if ($do == "Manage") {
         // Xử lý thêm khách hàng mới
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_customer'])) {
             $name = $_POST['name'];
             $phone = $_POST['phone'];
             $address = $_POST['address'];
@@ -41,6 +41,20 @@ if (isset($_SESSION['username']) && isset($_SESSION['password'])) {
                 echo "<div class='alert alert-success'>Customer added successfully!</div>";
             } else {
                 echo "<div class='alert alert-danger'>Failed to add customer.</div>";
+            }
+        }
+
+        // Xử lý xóa khách hàng
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_customer'])) {
+            $customer_id = $_POST['customer_id'];
+
+            $stmt = $con->prepare("DELETE FROM Customers WHERE CustomerID = ?");
+            $stmt->execute([$customer_id]);
+
+            if ($stmt) {
+                echo "<div class='alert alert-success'>Customer deleted successfully!</div>";
+            } else {
+                echo "<div class='alert alert-danger'>Failed to delete customer.</div>";
             }
         }
 
@@ -68,6 +82,7 @@ if (isset($_SESSION['username']) && isset($_SESSION['password'])) {
                             <th scope="col">Gender</th>
                             <th scope="col">Join Date</th>
                             <th scope="col">Loyalty Points</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -82,6 +97,12 @@ if (isset($_SESSION['username']) && isset($_SESSION['password'])) {
                                 echo "<td>" . htmlspecialchars($client['Gender']) . "</td>";
                                 echo "<td>" . htmlspecialchars($client['JoinDate']) . "</td>";
                                 echo "<td>" . htmlspecialchars($client['LoyaltyPoints']) . "</td>";
+                                echo "<td>
+                                        <form action='' method='POST' style='display:inline;'>
+                                            <input type='hidden' name='customer_id' value='" . $client['CustomerID'] . "'>
+                                            <button type='submit' name='delete_customer' class='btn btn-danger btn-sm'>Delete</button>
+                                        </form>
+                                      </td>";
                             echo "</tr>";
                         }
                         ?>
@@ -134,7 +155,7 @@ if (isset($_SESSION['username']) && isset($_SESSION['password'])) {
                                 <label for="loyalty_points">Loyalty Points</label>
                                 <input type="number" class="form-control" id="loyalty_points" name="loyalty_points" value="0" required>
                             </div>
-                            <button type="submit" class="btn btn-primary">Add Customer</button>
+                            <button type="submit" name="add_customer" class="btn btn-primary">Add Customer</button>
                         </form>
                     </div>
                 </div>
